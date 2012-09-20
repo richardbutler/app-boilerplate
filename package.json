@@ -1,0 +1,32 @@
+{
+  "name": "workflow-setup",
+  "version": "0.0.1",
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "install": "./scripts/install.sh",
+    "test": "make test",
+    "server": "make server"
+  },
+  "dependencies": {
+    "express": "*",
+    "connect-coffee-script": "*",
+    "underscore": "*",
+    "stylus": "*",
+    "nib": "*",
+    "jade": "*",
+    "async": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "grunt": "*",
+    "grunt-contrib": "*",
+    "grunt-mocha": "*",
+    "grunt-reload": "*",
+    "grunt-coffee": "*",
+    "node-spritesheet": "*",
+    "expect.js": "*",
+    "supertest": "*"
+  }
+}
