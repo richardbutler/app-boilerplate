@@ -16,11 +16,13 @@ runTest = ( specFile ) ->
     specFile
   ]
   
-  opts = stdio: ['pipe', 'pipe', process.stderr]
+  opts = stdio: [process.stdin, process.stdout, process.stderr]
   nodePath = path.resolve "src/server"
   command = "NODE_ENV=test NODE_PATH=#{ nodePath } mocha #{ args.join ' ' }"
   
-  proc = exec command, opts, ( err, stdout, stderr ) ->
+  proc = exec command, ( err, stdout, stderr ) ->
+    console.log stderr if stderr
+    console.log stdout if stdout
 
 watchedFiles = {}
 

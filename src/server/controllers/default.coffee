@@ -13,7 +13,7 @@ class DefaultController
   data: ( req, res ) =>
   
     res.send
-      thing: "Stuffs"
+      thing: "Stuff"
     
   echo: ( req, res ) =>
   
