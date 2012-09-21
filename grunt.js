@@ -37,9 +37,13 @@ module.exports = function(grunt) {
       }
     },
     min: {
-      js: {
+      frameworks: {
         src: ['<config:concat.js.dest>'],
         dest: 'release/public/scripts/frameworks.js'
+      },
+      js: {
+        src: ['build/public/scripts/app.js'],
+        dest: 'release/public/scripts/app.js'
       },
       css: {
         src: ['<config:concat.css.dest>'],
@@ -85,15 +89,15 @@ module.exports = function(grunt) {
       index: [ 'test/index.html' ]
     },
     coffee: {
-      client: {
-        options: {
-          bare: true,
-          preserve_dirs: true,
-          base_path: "src/client/scripts"
-        },
-        src: "src/client/scripts/**/*.coffee",
-        dest: "build/public/scripts"
-      },
+      //client: {
+      //  options: {
+      //    bare: true,
+      //    preserve_dirs: true,
+      //    base_path: "src/client/scripts"
+      //  },
+      //  src: "src/client/scripts/**/*.coffee",
+      //  dest: "build/public/scripts"
+      //},
       coverage: {
         options: {
           bare: true,
@@ -113,6 +117,11 @@ module.exports = function(grunt) {
         dest: "release"
       }
     },
+    browserify: {
+      "build/public/scripts/app.js": {
+        entries: ['src/client/scripts/app.coffee']
+      }
+    },
     copy: {
       js: {
         files: {
@@ -120,15 +129,15 @@ module.exports = function(grunt) {
         }
       },
       img: {
-        options: {
-          basePath: 'src/client/stylesheets'
-        },
-        files: {
-          "build/public/stylesheets/": [
-            "src/client/stylesheets/img/**/*",
-            "src/client/stylesheets/fonts/**/*"
-          ]
-        }
+      //  options: {
+      //    basePath: 'src/client/stylesheets'
+      //  },
+      //  files: {
+      //    "build/public/stylesheets/": [
+      //      "src/client/stylesheets/img/**/*",
+      //      "src/client/stylesheets/fonts/**/*"
+      //    ]
+      //  }
       },
       release: {
         options: {
@@ -197,13 +206,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-coffee');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-reload');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('node-spritesheet');
 
   // Default task.
   grunt.registerTask('default', 'clean coffee stylus concat min templates spritesheet copy mocha');
   grunt.registerTask('dev', 'reload watch');
-  grunt.registerTask('build', 'clean:build concat spritesheet copy:js copy:img');
-  grunt.registerTask('release', 'build clean:release coffee:client coffee:server min jade copy:release');
+  grunt.registerTask('build', 'clean:build concat browserify spritesheet copy');
+  grunt.registerTask('release', 'build clean:release coffee:server min jade copy:release');
   grunt.registerTask('cov', 'clean:coverage coffee:coverage');
   grunt.registerTask('test', 'dev mocha');
 

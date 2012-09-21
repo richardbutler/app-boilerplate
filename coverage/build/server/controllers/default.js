@@ -4,6 +4,8 @@ var DefaultController,
 DefaultController = (function() {
 
   function DefaultController() {
+    this.echo = __bind(this.echo, this);
+
     this.data = __bind(this.data, this);
 
     this.index = __bind(this.index, this);
@@ -12,7 +14,8 @@ DefaultController = (function() {
 
   DefaultController.prototype.setup = function(app) {
     app.get("/", this.index);
-    return app.get("/api/data", this.data);
+    app.get("/api/data", this.data);
+    return app.get("/echo/:message", this.echo);
   };
 
   DefaultController.prototype.index = function(req, res) {
@@ -23,6 +26,10 @@ DefaultController = (function() {
     return res.send({
       thing: "Stuff"
     });
+  };
+
+  DefaultController.prototype.echo = function(req, res) {
+    return res.send(req.params.message);
   };
 
   return DefaultController;

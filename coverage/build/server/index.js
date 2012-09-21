@@ -11,4 +11,8 @@ for (_i = 0, _len = activeControllers.length; _i < _len; _i++) {
 
 app.listen(3000);
 
-console.log("-- App started on localhost:3000");
+if (app.get("env") !== "test") {
+  console.log("-- App started on localhost:3000");
+}
+
+module.exports = app;

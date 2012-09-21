@@ -20,6 +20,9 @@ fi
 
 # Install phantom
 
+# No longer required for the moment
+exit 0
+
 if ! which phantomjs >/dev/null; then
 
 	# Add /usr/local/src

@@ -1,4 +1,6 @@
-var CLIENT_BUILD_PATH, CLIENT_RELEASE_PATH, CLIENT_SOURCE_PATH, CLIENT_VIEWS_PATH, coffee, express, nib, stylus;
+var CLIENT_BUILD_PATH, CLIENT_RELEASE_PATH, CLIENT_SOURCE_PATH, CLIENT_VIEWS_PATH, coffee, connect, express, nib, stylus;
+
+connect = require("connect");
 
 express = require("express");
 
@@ -19,7 +21,6 @@ CLIENT_RELEASE_PATH = "release/public";
 module.exports = function(app) {
   var setupDevelopmentEnvironment;
   setupDevelopmentEnvironment = function() {
-    app.use(express.logger("dev"));
     app.use(coffee({
       src: CLIENT_SOURCE_PATH,
       dest: CLIENT_BUILD_PATH,
@@ -35,13 +36,19 @@ module.exports = function(app) {
     return app.use(express["static"](CLIENT_BUILD_PATH));
   };
   app.configure("development", function() {
-    return setupDevelopmentEnvironment();
+    setupDevelopmentEnvironment();
+    app.use(express.logger("development"));
+    return app.use(express.errorHandler({
+      dumpExceptions: true,
+      showStack: true
+    }));
   });
   app.configure("test", function() {
     return setupDevelopmentEnvironment();
   });
   app.configure("production", function() {
-    return app.use(express["static"](CLIENT_RELEASE_PATH));
+    app.use(express["static"](CLIENT_RELEASE_PATH));
+    return app.use(connect.compress());
   });
   app.configure(function() {
     app.set("view engine", "jade");

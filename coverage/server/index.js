@@ -10,6 +10,8 @@ if (! _$jscoverage['index.js']) {
   _$jscoverage['index.js'][9] = 0;
   _$jscoverage['index.js'][12] = 0;
   _$jscoverage['index.js'][14] = 0;
+  _$jscoverage['index.js'][15] = 0;
+  _$jscoverage['index.js'][18] = 0;
 }
 _$jscoverage['index.js'][1]++;
 var activeControllers, app, controllerName, _i, _len;
@@ -27,5 +29,10 @@ for (_i = 0, _len = activeControllers.length; _i < _len; _i++) {
 _$jscoverage['index.js'][12]++;
 app.listen(3000);
 _$jscoverage['index.js'][14]++;
-console.log("-- App started on localhost:3000");
-_$jscoverage['index.js'].source = ["var activeControllers, app, controllerName, _i, _len;","","app = require(\"./core/app\");","","activeControllers = [\"default\"];","","for (_i = 0, _len = activeControllers.length; _i &lt; _len; _i++) {","  controllerName = activeControllers[_i];","  require(\"./controllers/\" + controllerName).setup(app);","}","","app.listen(3000);","","console.log(\"-- App started on localhost:3000\");"];
+if (app.get("env") !== "test") {
+  _$jscoverage['index.js'][15]++;
+  console.log("-- App started on localhost:3000");
+}
+_$jscoverage['index.js'][18]++;
+module.exports = app;
+_$jscoverage['index.js'].source = ["var activeControllers, app, controllerName, _i, _len;","","app = require(\"./core/app\");","","activeControllers = [\"default\"];","","for (_i = 0, _len = activeControllers.length; _i &lt; _len; _i++) {","  controllerName = activeControllers[_i];","  require(\"./controllers/\" + controllerName).setup(app);","}","","app.listen(3000);","","if (app.get(\"env\") !== \"test\") {","  console.log(\"-- App started on localhost:3000\");","}","","module.exports = app;"];

@@ -7,9 +7,10 @@
   "scripts": {
     "install": "./scripts/install.sh",
     "test": "make test",
-    "server": "make server"
+    "start": "make server"
   },
   "dependencies": {
+    "connect": "*",
     "express": "*",
     "connect-coffee-script": "*",
     "underscore": "*",
@@ -20,11 +21,14 @@
   },
   "devDependencies": {
     "mocha": "*",
+    "zombie": "*",
+    "jquery": "*",
     "grunt": "*",
     "grunt-contrib": "*",
     "grunt-mocha": "*",
     "grunt-reload": "*",
     "grunt-coffee": "*",
+    "grunt-browserify": "*",
     "node-spritesheet": "*",
     "expect.js": "*",
     "supertest": "*"

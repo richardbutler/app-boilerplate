@@ -2,10 +2,9 @@ class DefaultController
 
   setup: ( app ) ->
   
-    # GET /
-    
     app.get "/", @index
     app.get "/api/data", @data
+    app.get "/echo/:message", @echo
       
   index: ( req, res ) =>
     
@@ -14,6 +13,10 @@ class DefaultController
   data: ( req, res ) =>
   
     res.send
-      thing: "Stuff"
+      thing: "Stuffs"
+    
+  echo: ( req, res ) =>
+  
+    res.send req.params.message
     
 module.exports = new DefaultController()

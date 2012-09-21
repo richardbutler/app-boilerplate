@@ -1,3 +1,4 @@
+connect     = require "connect"
 express     = require "express"
 coffee      = require "connect-coffee-script"
 stylus      = require "stylus"
@@ -15,9 +16,6 @@ module.exports = ( app ) ->
   # Common development and test configuration
   
   setupDevelopmentEnvironment = ->
-  
-    # Log stuff
-    app.use express.logger( "dev" )
   
     # Compile coffeescript on the fly
     app.use coffee
@@ -45,6 +43,14 @@ module.exports = ( app ) ->
   
     setupDevelopmentEnvironment()
     
+    # Log stuff
+    app.use express.logger( "development" )
+    
+    # Dump exceptions
+    app.use express.errorHandler
+      dumpExceptions: true
+      showStack: true
+    
   # Test-only configuration
     
   app.configure "test", ->
@@ -57,6 +63,9 @@ module.exports = ( app ) ->
   
     # Serve static assets
     app.use express.static( CLIENT_RELEASE_PATH )
+    
+    # Gzip static assets
+    app.use connect.compress()
   
   # Default cross-environment configuration
 
