@@ -20,6 +20,7 @@ build process for projects built on [Node.js](http://nodejs.org). It's built on
 	* Image bundles to spritesheets and CSS
 	* CSS concatenation
 	* JavaScript concatenation
+	
 * Application boilerplate
 	* CSS reset via [Normalize.js](http://necolas.github.com/normalize.css)
 	* [Twitter Bootstrap](http://twitter.github.com/bootstrap)
@@ -28,14 +29,17 @@ build process for projects built on [Node.js](http://nodejs.org). It's built on
 	* MVC architecture via [Backbone.js](http://backbonejs.org)
 	* JavaScript utility belt via [Underscore.js](http://underscorejs.org)
 	* More manageable asynchronous programming via [async](http://github.com/caolan/async)
+	
 * Standards automation
 	* Linting for CoffeeScript
 	* Linting for CSS
+	
 * Test automation
 	* Client-side unit testing via [Mocha](http://visionmedia.github.com/mocha)
 	* Server-side unit testing via [Mocha](http://visionmedia.github.com/mocha)
 	* Headless integration testing using [Zombie.js](http://zombie.labnotes.org)
 	* Code coverage using [jscoverage](http://siliconforks.com/jscoverage)
+	
 * Production build
 	* CSS minification
 	* JavaScript minification and obfuscation
@@ -69,8 +73,7 @@ the browser.
 (Experimental) - runs a watch script that will attempt to run the corresponding
 unit test for the changed file.
 
-e.g. Changes to ```src/server/controllers/default.coffee``` will run the test 
-```spec/server/controllers/default.spec.coffee```.
+e.g. Changes to ```src/server/controllers/default.coffee``` will run the test ```spec/server/controllers/default.spec.coffee```.
 
 ### Application deployment
 
@@ -103,13 +106,10 @@ Run unit (and integration) tests for the server only.
 ```make cov```
 
 Build the instrumented JavaScript and run unit tests for the client and the
-server. This target will output ```build/coverage/client.html``` and
-```build/coverage/client.html```.
+server. This target will output ```build/coverage/client.html``` and ```build/coverage/client.html```.
 
 ```make cov-client```
-Build the instrumented JavaScript and run unit tests for the client only. This
-target will output ```build/coverage/client.html```.
+Build the instrumented JavaScript and run unit tests for the client only. This target will output ```build/coverage/client.html```.
 
 ```make cov-server```
-Build the instrumented JavaScript and run unit tests for the server only. This
-target will output  ```build/coverage/server.html```.
+Build the instrumented JavaScript and run unit tests for the server only. This target will output  ```build/coverage/server.html```.
