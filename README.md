@@ -69,7 +69,7 @@ the browser.
 (Experimental) - runs a watch script that will attempt to run the corresponding
 unit test for the changed file.
 
-e.g. Changes to ```src/server/controllers/default.coffee``` will run the test
+e.g. Changes to ```src/server/controllers/default.coffee``` will run the test 
 ```spec/server/controllers/default.spec.coffee```.
 
 ### Application deployment
