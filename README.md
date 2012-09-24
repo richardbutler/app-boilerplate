@@ -96,9 +96,11 @@ Build and start the server in production mode.
 Run unit tests for the client and the server.
 
 ```make test-client```
+
 Run unit tests for the client only.
 
 ```make test-server```
+
 Run unit (and integration) tests for the server only.
 
 ### Testing with coverage
@@ -109,7 +111,9 @@ Build the instrumented JavaScript and run unit tests for the client and the
 server. This target will output ```build/coverage/client.html``` and ```build/coverage/client.html```.
 
 ```make cov-client```
+
 Build the instrumented JavaScript and run unit tests for the client only. This target will output ```build/coverage/client.html```.
 
 ```make cov-server```
+
 Build the instrumented JavaScript and run unit tests for the server only. This target will output  ```build/coverage/server.html```.
