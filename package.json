@@ -32,7 +32,7 @@
     "grunt-css": "*",
     "grunt-coffeelint": "*",
     "node-spritesheet": "*",
-    "expect.js": "*",
+    "should": "*",
     "supertest": "*"
   }
 }
