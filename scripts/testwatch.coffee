@@ -16,18 +16,18 @@ runTest = ( specFile ) ->
     specFile
   ]
   
-  opts = stdio: [process.stdin, process.stdout, process.stderr]
   nodePath = path.resolve "src/server"
-  command = "NODE_ENV=test NODE_PATH=#{ nodePath } mocha #{ args.join ' ' }"
+  command = "NODE_ENV=test NODE_PATH=#{ nodePath } mocha #{ args.join ' ' } --colors"
   
   proc = exec command, ( err, stdout, stderr ) ->
+    console.log "ERROR", err if err
     console.log stderr if stderr
     console.log stdout if stdout
 
 watchedFiles = {}
 
 watchFile = ( file ) ->
-  console.log "watch file", file
+  #console.log "watch file", file
   if !watchedFiles[ file ]
     fs.watchFile file, ( curr, prev ) ->
       if curr.mtime > prev.mtime
@@ -52,7 +52,7 @@ getFiles = ->
   walk( "src" ).concat( walk( "spec" ) )
 
 test = ( file ) ->
-  console.log "Change detected", file
+  # console.log "Change detected", file
   return if file.indexOf( ".coffee" ) <= 0
   
   filePath = file.split separator
@@ -77,4 +77,4 @@ checkForNewFiles = ->
     # Watch this file.
     watchFile filepath
 
-setInterval checkForNewFiles, 200
+setInterval checkForNewFiles, 1000

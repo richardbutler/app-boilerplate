@@ -1,110 +1,236 @@
+#!/bin/bash
+
 SHELL := /bin/bash
 
-# ----------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+# PATHS
+#
+#-------------------------------------------------------------------------------
+
+#
+# Source paths
+#
+
+CLIENT_SOURCE_PATH			= "./src/client/scripts"
+SERVER_SOURCE_PATH 			= "./src/server"
+
+#
+# Spec (test) paths
+#
+
+CLIENT_SPEC_PATH			= "./spec/client"
+SERVER_SPEC_PATH 			= "./spec/server"
+
+#
+# Build paths
+#
+
+DEVELOPMENT_BUILD_PATH 		= "./build/dev"
+PRODUCTION_BUILD_PATH 		= "./build/prod"
+
+#
+# Code coverage paths
+#
+
+CLIENT_COVERAGE_PATH		= "./build/coverage/client"
+SERVER_COVERAGE_PATH		= "./build/coverage/server"
+COVERAGE_TMP_PATH			= "./build/coverage/tmp"
+CLIENT_COVERAGE_TMP_PATH	= "./build/coverage/tmp/client"
+SERVER_COVERAGE_TMP_PATH	= "./build/coverage/tmp/server"
+
+#-------------------------------------------------------------------------------
+#
 # APPLICATION
-# ----------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
 
+#
 # Update the application's dependencies
+#
 
-update:
+install:
 	npm install
-	cp node_modules/mocha/mocha.js test/client/lib
-	cp node_modules/mocha/mocha.css test/client/lib
 
-# ----------------------------------------------------------
-# SERVER
-# ----------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+# DEVELOPMENT
+#
+#-------------------------------------------------------------------------------
 
-# Build and start the server in development mode
+#
+# Runs the grunt 'dev' target, which watches for changes and
+# reloads in the browser
+#
 
 dev:
-	@grunt build --force
+	@grunt dev --force
+
+#
+# (Experimental) - runs a watch script that will attempt to
+# run the corresponding unit test for the changed file.
+#
+# e.g. Changes to src/server/controllers/default.coffee will
+# run the test spec/server/controllers/default.spec.coffee
+#
+
+dev-unit:
+	@coffee scripts/testwatch.coffee
+
+#-------------------------------------------------------------------------------
+#
+# SERVER
+#
+#-------------------------------------------------------------------------------
+
+#
+# Build and start the server in development mode
+#
+
+dev-server:
+	@grunt build
+	@make dev-server-run
+
+#
+# Just run the development server without a rebuild
+#
+
+dev-server-run:
 	@NODE_PATH=. \
 		NODE_ENV=development \
-		supervisor --no-restart-on exit --watch ./src/server ./src/server/index.coffee 
+		supervisor \
+		--no-restart-on exit \
+		--watch $(SERVER_SOURCE_PATH) \
+		$(SERVER_SOURCE_PATH)/index.coffee 
 
-# Build and start the server in production mode
+#
+# Just release the production code
+#
 
 prod:
-	@grunt release
+	@grunt release --force
+
+#
+# Build and start the server in production mode
+#
+
+prod-server: prod prod-server-run
+
+#
+# Just run the production server without a rebuild
+#
+
+prod-server-run:
 	@NODE_PATH=. \
 		NODE_ENV=production \
-		supervisor ./release/index.js
+		supervisor $(PRODUCTION_BUILD_PATH)/index.js
 
-# ----------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
 # TESTS
-# ----------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
 
+#
 # Run unit tests for the client and the server
+#
 
 test:
 	@make test-client test-server
 
+#
 # Run unit tests for the client only
+#
 
 test-client:
-	@NODE_PATH=./src/client/scripts \
+	@NODE_PATH=$(CLIENT_SOURCE_PATH) \
 		NODE_ENV=test \
-		mocha -R spec spec/client \
+		mocha -R spec $(CLIENT_SPEC_PATH) \
 		--compilers coffee:coffee-script \
 		--recursive \
 		--require should
 
+#
 # Run unit tests for the server only
+#
 
 test-server:
-	@NODE_PATH=./src/server \
+	@NODE_PATH=$(SERVER_SOURCE_PATH) \
 		NODE_ENV=test \
-		mocha -R spec spec/server \
+		mocha -R spec $(SERVER_SPEC_PATH) \
 		--compilers coffee:coffee-script \
 		--recursive \
 		--require should
 
-# ----------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
 # TESTS WITH COVERAGE
-# ----------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
 
+#
 # Build the instrumented JavaScript and run unit tests for
 # the client and the server
+#
 
 cov: 
-	@grunt cov
-	@make cov-client
 	@make cov-server
+	@make cov-client
+	@rm -r $(COVERAGE_TMP_PATH)
 
+#
 # Build the instrumented JavaScript and run unit tests for
 # the client
+#
 
 cov-client:
 
+	@grunt cov:client
+
+	@if [ -d $(CLIENT_COVERAGE_PATH) ]; then \
+		rm -r $(CLIENT_COVERAGE_PATH); \
+	fi
+
 	@jscoverage \
-		coverage/build/client/scripts \
-		coverage/client
+		$(CLIENT_COVERAGE_TMP_PATH) \
+		$(CLIENT_COVERAGE_PATH)
 	
 	@COVERAGE=1 \
 		NODE_ENV=test \
-		NODE_PATH=./coverage/client \
-		mocha -R html-cov spec/client \
+		NODE_PATH=$(CLIENT_COVERAGE_PATH) \
+		mocha -R html-cov $(CLIENT_SPEC_PATH) \
 		--compilers coffee:coffee-script \
 		--recursive \
 		--require should \
-		> coverage/client.html
+		> $(CLIENT_COVERAGE_PATH).html
 
+	@rm -r $(COVERAGE_CLIENT_TMP_PATH)
+
+#
 # Build the instrumented JavaScript and run unit tests for
 # the server
+#
 
 cov-server:
 
+	@grunt cov:server
+
+	@if [ -d $(SERVER_COVERAGE_PATH) ]; then \
+		rm -r $(SERVER_COVERAGE_PATH); \
+	fi
+
 	@jscoverage \
-		coverage/build/server \
-		coverage/server
+		$(SERVER_COVERAGE_TMP_PATH) \
+		$(SERVER_COVERAGE_PATH)
 	
 	@COVERAGE=1 \
 		NODE_ENV=test \
-		NODE_PATH=./coverage/server \
-		mocha -R html-cov spec/server \
+		NODE_PATH=$(SERVER_COVERAGE_PATH) \
+		mocha -R html-cov $(SERVER_SPEC_PATH) \
 		--compilers coffee:coffee-script \
 		--recursive \
 		--require should \
-		> coverage/server.html
+		> $(SERVER_COVERAGE_PATH).html
+		
+	@rm -r $(SERVER_COVERAGE_TMP_PATH)
 		

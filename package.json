@@ -12,6 +12,7 @@
   "dependencies": {
     "connect": "*",
     "express": "*",
+    "browserify": "*",
     "connect-coffee-script": "*",
     "underscore": "*",
     "stylus": "*",
@@ -25,10 +26,11 @@
     "jquery": "*",
     "grunt": "*",
     "grunt-contrib": "*",
-    "grunt-mocha": "*",
     "grunt-reload": "*",
     "grunt-coffee": "*",
     "grunt-browserify": "*",
+    "grunt-css": "*",
+    "grunt-coffeelint": "*",
     "node-spritesheet": "*",
     "expect.js": "*",
     "supertest": "*"

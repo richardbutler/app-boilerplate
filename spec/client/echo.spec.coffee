@@ -12,7 +12,7 @@ describe "index", ->
   it "visits index", ( done ) ->
     
     browser.visit "http://localhost:3000", ( err, result, statusCode ) ->
-      done err if err
+      return done new Error( err ) if err
       
       $( "title" ).text().should.equal( "Index" )
       $( "h3" ).text().should.equal( "Index" )

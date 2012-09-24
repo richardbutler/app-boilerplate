@@ -1,55 +1,37 @@
+config = require( "./grunt.config" )
+
 module.exports = function(grunt) {
 
   /**
    * Project structure:
    * 
-   * build      - Initial (development) build folder
-   * coverage   - Intermediate build for test coverage
-   * release    - Release folder for distribution (includes minified js, css, etc)
-   * scripts    - Installation and mainentance scripts for environment, database, etc
-   * src        - Source folder
-   * tasks      - Custom Grunt.js tasks folder
-   * test       - Mocha tests
-   * vendor     - Third-party client javascript files
+   * build
+   *    dev       - Initial (development) build folder
+   *    coverage  - Intermediate build for test coverage
+   *    prod      - Release folder for distribution (includes minified js, css, etc)
+   * 
+   * scripts      - Installation and mainentance scripts for environment, database, etc
+   * src          - Source folder
+   * tasks        - Custom Grunt.js tasks folder
+   * test         - Mocha tests
+   * vendor       - Third-party client javascript files
    */
 
   // Project configuration.
   grunt.initConfig({
     pkg: '<json:package.json>',
-    concat: {
-      js: {
-        src: [
-          'vendor/es5-polyfill.js',
-          'vendor/jquery-1.7.1.min.js',
-          'vendor/async.min.js',
-          'vendor/underscore.js',
-          'vendor/backbone.js'
-        ],
-        dest: 'build/public/scripts/vendor/frameworks.js'
-      },
-      css: {
-        src: [
-          "src/client/stylesheets/normalize.css",
-          "src/client/stylesheets/fonts.css",
-          "src/client/stylesheets/app.css"
-        ],
-        dest: "build/public/stylesheets/app.css"
-      }
-    },
-    min: {
-      frameworks: {
-        src: ['<config:concat.js.dest>'],
-        dest: 'release/public/scripts/frameworks.js'
-      },
-      js: {
-        src: ['build/public/scripts/app.js'],
-        dest: 'release/public/scripts/app.js'
-      },
-      css: {
-        src: ['<config:concat.css.dest>'],
-        dest: 'release/public/stylesheets/app.css'
-      }
-    },
+    
+    //--------------------------------------------------------------------------
+    //
+    // Development tasks
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Watches the specified files and triggers a rebuild ('dev')
+     * and a reload ('reload').
+     */
+    
     watch: {
       files: [
         "grunt.js",
@@ -58,54 +40,58 @@ module.exports = function(grunt) {
       ],
       tasks: 'dev reload'
     },
+    
+    /**
+     * On pointing the browser to http://localhost:8001 rather than
+     * http://localhost:3000, pages will automatically reload in
+     * response to file changes when the watch task is running.
+     */
+    
     reload: {
-      port: 8001,
+      port: config.RELOAD_PORT,
       proxy: {
-        host: 'localhost'
+        host: config.HOST,
+        port: config.PORT
       }
     },
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true
-      },
-      globals: {
-        exports: true,
-        define: true,
-        require: true,
-        module: false,
-        $: true
-      }
-    },
-    mocha: {
-      index: [ 'test/index.html' ]
-    },
+    
+    //--------------------------------------------------------------------------
+    //
+    // CoffeeScript
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * CoffeeScript compilation.
+     */
+    
     coffee: {
-      //client: {
-      //  options: {
-      //    bare: true,
-      //    preserve_dirs: true,
-      //    base_path: "src/client/scripts"
-      //  },
-      //  src: "src/client/scripts/**/*.coffee",
-      //  dest: "build/public/scripts"
-      //},
-      coverage: {
+      client: {
         options: {
           bare: true,
           preserve_dirs: true,
-          base_path: "src"
+          base_path: "src/client/scripts"
         },
-        src: "src/**/*.coffee",
-        dest: "coverage/build"
+        src: "src/client/scripts/**/*.coffee",
+        dest: "build/dev/public/scripts"
+      },
+      coverage_client: {
+        options: {
+          bare: true,
+          preserve_dirs: true,
+          base_path: "src/client/scripts"
+        },
+        src: "src/client/scripts/**/*.coffee",
+        dest: "build/coverage/tmp/client"
+      },
+      coverage_server: {
+        options: {
+          bare: true,
+          preserve_dirs: true,
+          base_path: "src/server"
+        },
+        src: "src/server/**/*.coffee",
+        dest: "build/coverage/tmp/server"
       },
       server: {
         options: {
@@ -114,89 +100,278 @@ module.exports = function(grunt) {
           base_path: "src/server"
         },
         src: "src/server/**/*.coffee",
-        dest: "release"
+        dest: "build/prod"
       }
     },
+    
+    /**
+     * Linting for CoffeeScript - lints the source files directly.
+     * For options, see grunt.config.js
+     */
+    
+    coffeelint: {
+      client: {
+        files: [
+          "src/client/scripts/**/*.coffee",
+          "spec/client/**/*.coffee"
+        ],
+        options: config.COFFEE_LINT_OPTS
+      },
+      server: {
+        files: [
+          "src/server/**/*.coffee",
+          "spec/server/**/*.coffee"
+        ],
+        options: config.COFFEE_LINT_OPTS
+      },
+    },
+    
+    /**
+     * Allows the usage of module.exports within client-side JavaScript code.
+     * This task transforms the client-side CoffeeScript code into a single
+     * bundle for development and deployment.
+     */
+    
     browserify: {
-      "build/public/scripts/app.js": {
+      "build/dev/public/scripts/app.js": {
         entries: ['src/client/scripts/app.coffee']
       }
     },
-    copy: {
+    
+    //--------------------------------------------------------------------------
+    //
+    // Optimisation tasks
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Concatenation
+     */
+    
+    concat: {
+      
+      // Concatenates JavaScript vendor files/frameworks.
+       
       js: {
-        files: {
-          "build/public/scripts/vendor/require.js": "vendor/require.js"
-        }
+        src: [
+          'vendor/es5-polyfill.js',
+          'vendor/jquery-1.7.1.min.js',
+          'vendor/async.min.js',
+          'vendor/modernizr.js',
+          'vendor/underscore.js',
+          'vendor/backbone.js',
+          'vendor/bootstrap/js/bootstrap.js'
+        ],
+        dest: 'build/dev/public/scripts/frameworks.js'
       },
-      img: {
-      //  options: {
-      //    basePath: 'src/client/stylesheets'
-      //  },
-      //  files: {
-      //    "build/public/stylesheets/": [
-      //      "src/client/stylesheets/img/**/*",
-      //      "src/client/stylesheets/fonts/**/*"
-      //    ]
-      //  }
-      },
-      release: {
-        options: {
-          basePath: 'build'
-        },
-        files: {
-          "release/": [
-            "build/public/stylesheets/img/**/*",
-            "build/public/stylesheets/fonts/**/*",
-            "build/public/scripts/vendor/**/*"
-          ]
-        }
+      
+      // Concatenates all CSS into a single file.
+      
+      css: {
+        src: [
+          "src/client/stylesheets/normalize.css",
+          "vendor/bootstrap/css/bootstrap.css",
+          "src/client/stylesheets/fonts.css",
+          "build/dev/public/stylesheets/app.css",
+          "build/dev/public/stylesheets/*.css"
+        ],
+        dest: "build/dev/public/stylesheets/app.css"
       }
     },
+    
+    /**
+     * Minification - Javascript
+     */
+    
+    min: {
+      
+      // Minifies vendor code
+      
+      frameworks: {
+        src: ['build/dev/public/scripts/frameworks.js'],
+        dest: 'build/prod/public/scripts/frameworks.js'
+      },
+      
+      // Minifies application code
+      
+      js: {
+        src: ['build/dev/public/scripts/app.js'],
+        dest: 'build/prod/public/scripts/app.js'
+      }
+    },
+    
+    /**
+     * Uglify options for minification
+     * @see grunt.config.js
+     */
+    
+    uglify: config.UGLIFY_OPTS,
+    
+    //--------------------------------------------------------------------------
+    //
+    // HTML and templating
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Jade compilation to HTML.
+     */
+    
     jade: {
       release: {
         files: {
-          "release/views/index.html": "src/client/views/index.jade"
+          "build/prod/views/index.html": "src/client/views/index.jade"
         }
       },
     },
+    
+    /**
+     * Template compilation: takes all .tpl.jade files from a directory and
+     * injects them as <script> tags into the specified HTML file.
+     */
+    
     templates: {
       compile: {
         options: {
           pretty: true
         },
         files: {
-          'build/views/index.html': [ 'src/client/views/**/*.tpl.jade' ]
+          'build/dev/views/index.html': [ 'src/client/views/**/*.tpl.jade' ]
         }
       }
     },
-    spritesheet: {
-      compile: {
-        options: {
-          outputImage: 'sprite/flags.png',
-          outputCss: 'flags.css',
-          selector: '.flag'
-        },
-        files: {
-          'build/public/stylesheets': 'src/client/stylesheets/sprite/flags/*'
-        }
-      }
-    },
+    
+    //--------------------------------------------------------------------------
+    //
+    // CSS and styling
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Compile CSS from Stylus files.
+     */
+    
     stylus: {
       build: {
         options: {
           compress: false
         },
         files: {
-          "build/public/stylesheets/app.css": "src/client/stylesheets/app.styl"
+          "build/dev/public/stylesheets/app.css": "src/client/stylesheets/app.styl"
         }
       }
     },
+    
+    /**
+     * Linting for CSS - lints the dev build.
+     */
+    
+    csslint: {
+      build: {
+        src: "build/dev/public/stylesheets/app.css",
+        rules: {
+          "import": false,
+          "overqualified-elements": 2
+        }
+      }
+    },
+    
+    /**
+     * Generate sprite sheets from directories of images.
+     */
+    
+    spritesheet: {
+      flags: {
+        options: {
+          outputImage: 'sprite/flags.png',
+          outputCss: 'flags.css',
+          selector: '.flag'
+        },
+        files: {
+          'build/dev/public/stylesheets': 'src/client/stylesheets/sprite/flags/*'
+        }
+      }
+    },
+    
+    /**
+     * Minification for CSS - minifies the dev build when used to create the
+     * prod build.
+     */
+    
+    cssmin: {
+      prod: {
+        src: ["build/dev/public/stylesheets/app.css"],
+        dest: "build/prod/public/stylesheets/app.css"
+      }
+    },
+    
+    //--------------------------------------------------------------------------
+    //
+    // Utilities and housekeeping
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Simple file copying.
+     */
+    
+    copy: {
+      
+      // Copy relevant files out of source folders into the dev build.
+      
+      js: {
+      //  files: {
+      //    "build/dev/public/scripts/vendor/require.js": "vendor/require.js"
+      //  }
+      },
+      
+      img: {
+      //  options: {
+      //    basePath: 'src/client/stylesheets'
+      //  },
+      //  files: {
+      //    "build/dev/public/stylesheets/": [
+      //      "src/client/stylesheets/img/**/*",
+      //      "src/client/stylesheets/fonts/**/*"
+      //    ]
+      //  }
+      },
+      
+      // Copy relevant files from the dev build to the prod build.
+      
+      release: {
+        options: {
+          basePath: 'build/dev'
+        },
+        files: {
+          "build/prod/": [
+            "build/dev/public/stylesheets/img/**/*",
+            "build/dev/public/stylesheets/fonts/**/*"
+          ]
+        }
+      }
+    },
+    
+    /**
+     * Clean folders ready for building.
+     */
+    
     clean: {
-      build: "build",
-      coverage: "coverage",
-      release: "release"
+      build: "build/dev",
+      release: "build/prod"
     }
+    
   });
+
+  //----------------------------------------------------------------------------
+  //
+  // Tasks
+  //
+  //----------------------------------------------------------------------------
+
+  //--------------------------------------
+  // Load tasks from NPM libraries
+  //--------------------------------------
 
   // Load custom tasks.
   grunt.loadTasks('tasks');
@@ -204,17 +379,72 @@ module.exports = function(grunt) {
   // Load NPM tasks.
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-coffee');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-reload');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-css');
+  grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('node-spritesheet');
 
-  // Default task.
-  grunt.registerTask('default', 'clean coffee stylus concat min templates spritesheet copy mocha');
-  grunt.registerTask('dev', 'reload watch');
-  grunt.registerTask('build', 'clean:build concat browserify spritesheet copy');
-  grunt.registerTask('release', 'build clean:release coffee:server min jade copy:release');
-  grunt.registerTask('cov', 'clean:coverage coffee:coverage');
-  grunt.registerTask('test', 'dev mocha');
+  //--------------------------------------
+  // Define tasks
+  //--------------------------------------
+  
+  /**
+   * General development task:
+   * 
+   * 1. Runs a dev build
+   * 2. Listens for changes on source files
+   * 3. Re-runs a dev build on changes to watched files
+   */
+  
+  grunt.registerTask('dev', 'build reload watch');
+  
+  /**
+   * Runs a dev build of the client and server into build/dev:
+   * 
+   * 1. Cleans the build/dev directory
+   * 2. Lints the CoffeeScript source files
+   * 3. Creates a development JS bundle using Browserify
+   * 4. Compiles Stylus (.styl) files to CSS
+   * 5. Lints the CSS that's been generated by 4
+   * 6. Generates spritesheets
+   * 7. Concatenates framework (vendor) JS files into a frameworks.js package
+   * 8. Copies JS* and images from source directories into target dev build
+   * 
+   * (*) JS not currently copied - reinstate if using require.js
+   */
+  
+  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint spritesheet concat copy:js copy:img');
+  
+  /**
+   * Runs a release build of the client and server into build/prod:
+   * 
+   * 1. Runs a dev build to feed from
+   * 2. Cleans the build/prod directory
+   * 3. Compiles the server CoffeeScript into JavaScript
+   * 4. Compiles the views (Jade) into HTML
+   * 5. Minifies the JavaScript for the client (not the server)
+   * 6. Minifies the CSS
+   * 7. Copies any other artifacts from dev build into prod build (images, etc)
+   * 
+   * Defined as the default build target.
+   */
+  
+  grunt.registerTask('release', 'build clean:release coffee:server jade min cssmin copy:release');
+  grunt.registerTask('default', 'release');
+  
+  /**
+   * Compiles a build of the client CoffeeScript sources into JavaScript, ready
+   * for instrumentation by jscoverage (requires Make task).
+   */
+  
+  grunt.registerTask('cov:client', 'coffee:coverage_client');
+  
+  /**
+   * Compiles a build of the server CoffeeScript sources into JavaScript, ready
+   * for instrumentation by jscoverage (requires Make task).
+   */
+  
+  grunt.registerTask('cov:server', 'coffee:coverage_server');
 
 };
