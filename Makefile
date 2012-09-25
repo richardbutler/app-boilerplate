@@ -47,8 +47,7 @@ define MOCHA_OPTS
 	--compilers coffee:coffee-script \
 		--recursive \
 		--require should \
-		--growl \
-		--colors
+		--growl
 endef
 
 #-------------------------------------------------------------------------------
@@ -166,6 +165,7 @@ test-client:
 		NODE_ENV=test \
 		mocha -R spec $(CLIENT_SPEC_PATH) \
 		$(MOCHA_OPTS) \
+		--colors \
 		--slow 1000ms
 
 #
@@ -176,7 +176,8 @@ test-server:
 	@NODE_PATH=$(SERVER_SOURCE_PATH) \
 		NODE_ENV=test \
 		mocha -R spec $(SERVER_SPEC_PATH) \
-		$(MOCHA_OPTS)
+		$(MOCHA_OPTS) \
+		--colors
 
 #-------------------------------------------------------------------------------
 #
