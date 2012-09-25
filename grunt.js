@@ -33,12 +33,23 @@ module.exports = function(grunt) {
      */
     
     watch: {
-      files: [
-        "grunt.js",
-        "src/client/**/*.*",
-        "vendor/**/*.*"
-      ],
-      tasks: 'dev reload'
+      dev: {
+        files: [
+          "grunt.js",
+          "src/**/*.*",
+          "vendor/**/*.*"
+        ],
+        tasks: 'dev reload'
+      },
+      dev_with_tests: {
+        files: [
+          "grunt.js",
+          "src/**/*.*",
+          "spec/**/*.*",
+          "vendor/**/*.*"
+        ],
+        tasks: 'dev-with-tests reload'
+      },
     },
     
     /**
@@ -138,6 +149,33 @@ module.exports = function(grunt) {
       }
     },
     
+    /**
+     * Runs various shell scripts.
+     */
+    
+    shell: {
+      
+      /**
+       * Runs client-side unit tests via mocha.
+       */
+      
+      client_test: {
+        command: config.CLIENT_TEST_COMMAND,
+        stdout: true,
+        stderr: true
+      },
+      
+      /**
+       * Runs server-side unit tests via mocha.
+       */
+      
+      server_test: {
+        command: config.SERVER_TEST_COMMAND,
+        stdout: true,
+        stderr: true
+      }
+    },
+    
     //--------------------------------------------------------------------------
     //
     // Optimisation tasks
@@ -151,8 +189,8 @@ module.exports = function(grunt) {
     concat: {
       
       // Concatenates JavaScript vendor files/frameworks.
-       
-      js: {
+      
+      frameworks: {
         src: [
           'vendor/es5-polyfill.js',
           'vendor/jquery-1.7.1.min.js',
@@ -163,6 +201,16 @@ module.exports = function(grunt) {
           'vendor/bootstrap/js/bootstrap.js'
         ],
         dest: 'build/dev/public/scripts/frameworks.js'
+      },
+      
+      // Concatenates application JavaScript code.
+      
+      app: {
+        src: [
+          'build/dev/public/scripts/templates.js',
+          'build/dev/public/scripts/app.js'
+        ],
+        dest: 'build/dev/public/scripts/app.js'
       },
       
       // Concatenates all CSS into a single file.
@@ -218,25 +266,42 @@ module.exports = function(grunt) {
      */
     
     jade: {
-      release: {
+      //views: {
+      //  options: {
+      //    basePath: "src/client/views/"
+      //  },
+      //  files: {
+      //    "build/dev/views/": [ "src/client/views/**/*.jade" ]
+      //  }
+      //},
+      templates: {
+        options: {
+          basePath: "src/client/views/"
+        },
         files: {
-          "build/prod/views/index.html": "src/client/views/index.jade"
+          "build/dev/views/templates/": [ "src/client/views/**/*.tpl.jade" ]
         }
-      },
+      }
     },
     
     /**
      * Template compilation: takes all .tpl.jade files from a directory and
-     * injects them as <script> tags into the specified HTML file.
+     * injects them into the specified js file.
      */
     
-    templates: {
+    jst: {
       compile: {
         options: {
-          pretty: true
+          templateSettings: {
+            //interpolate : /\{\{(.+?)\}\}/g
+            interpolate : /\{\{(.+?)\}\}/g
+          },
+          processName: function(filename) {
+            return filename.split("/").pop().split(".").shift();
+          }
         },
         files: {
-          'build/dev/views/index.html': [ 'src/client/views/**/*.tpl.jade' ]
+          'build/dev/public/scripts/templates.js': [ 'build/dev/views/**/*.tpl.html' ]
         }
       }
     },
@@ -347,6 +412,7 @@ module.exports = function(grunt) {
           "build/prod/": [
             "build/dev/public/stylesheets/img/**/*",
             "build/dev/public/stylesheets/fonts/**/*"
+            //, "build/dev/views/**/*"
           ]
         }
       }
@@ -373,17 +439,18 @@ module.exports = function(grunt) {
   // Load tasks from NPM libraries
   //--------------------------------------
 
-  // Load custom tasks.
-  grunt.loadTasks('tasks');
-  
   // Load NPM tasks.
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-coffee');
   grunt.loadNpmTasks('grunt-reload');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-css');
+  grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('node-spritesheet');
+
+  // Load custom tasks.
+  grunt.loadTasks('tasks');
 
   //--------------------------------------
   // Define tasks
@@ -394,10 +461,12 @@ module.exports = function(grunt) {
    * 
    * 1. Runs a dev build
    * 2. Listens for changes on source files
-   * 3. Re-runs a dev build on changes to watched files
+   * 3. Runs unit tests
+   * 4. Re-runs a dev build on changes to watched files
    */
   
-  grunt.registerTask('dev', 'build reload watch');
+  grunt.registerTask('dev', 'build reload watch:dev');
+  grunt.registerTask('dev-with-tests', 'build-with-tests reload watch:dev_with_tests');
   
   /**
    * Runs a dev build of the client and server into build/dev:
@@ -414,7 +483,8 @@ module.exports = function(grunt) {
    * (*) JS not currently copied - reinstate if using require.js
    */
   
-  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint spritesheet concat copy:js copy:img');
+  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint spritesheet jade jst concat copy:js copy:img');
+  grunt.registerTask('build-with-tests', 'build shell:client_test shell:server_test');
   
   /**
    * Runs a release build of the client and server into build/prod:
@@ -430,7 +500,7 @@ module.exports = function(grunt) {
    * Defined as the default build target.
    */
   
-  grunt.registerTask('release', 'build clean:release coffee:server jade min cssmin copy:release');
+  grunt.registerTask('release', 'build clean:release coffee:server min cssmin copy:release');
   grunt.registerTask('default', 'release');
   
   /**

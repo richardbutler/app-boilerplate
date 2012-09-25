@@ -39,6 +39,18 @@ COVERAGE_TMP_PATH			= "./build/coverage/tmp"
 CLIENT_COVERAGE_TMP_PATH	= "./build/coverage/tmp/client"
 SERVER_COVERAGE_TMP_PATH	= "./build/coverage/tmp/server"
 
+#
+# Options
+#
+
+define MOCHA_OPTS
+	--compilers coffee:coffee-script \
+		--recursive \
+		--require should \
+		--growl \
+		--colors
+endef
+
 #-------------------------------------------------------------------------------
 #
 # APPLICATION
@@ -50,7 +62,7 @@ SERVER_COVERAGE_TMP_PATH	= "./build/coverage/tmp/server"
 #
 
 install:
-	npm install
+	@npm install
 
 #-------------------------------------------------------------------------------
 #
@@ -65,6 +77,13 @@ install:
 
 dev:
 	@grunt dev --force
+
+#
+# As 'dev' target, but also runs all unit tests.
+#
+
+dev-with-tests:
+	@grunt dev-with-tests --force
 
 #
 # (Experimental) - runs a watch script that will attempt to
@@ -146,9 +165,8 @@ test-client:
 	@NODE_PATH=$(CLIENT_SOURCE_PATH) \
 		NODE_ENV=test \
 		mocha -R spec $(CLIENT_SPEC_PATH) \
-		--compilers coffee:coffee-script \
-		--recursive \
-		--require should
+		$(MOCHA_OPTS) \
+		--slow 1000ms
 
 #
 # Run unit tests for the server only
@@ -158,9 +176,7 @@ test-server:
 	@NODE_PATH=$(SERVER_SOURCE_PATH) \
 		NODE_ENV=test \
 		mocha -R spec $(SERVER_SPEC_PATH) \
-		--compilers coffee:coffee-script \
-		--recursive \
-		--require should
+		$(MOCHA_OPTS)
 
 #-------------------------------------------------------------------------------
 #
@@ -199,9 +215,7 @@ cov-client:
 		NODE_ENV=test \
 		NODE_PATH=$(CLIENT_COVERAGE_PATH) \
 		mocha -R html-cov $(CLIENT_SPEC_PATH) \
-		--compilers coffee:coffee-script \
-		--recursive \
-		--require should \
+		$(MOCHA_OPTS) \
 		> $(CLIENT_COVERAGE_PATH).html
 
 	@rm -r $(COVERAGE_CLIENT_TMP_PATH)
@@ -227,9 +241,7 @@ cov-server:
 		NODE_ENV=test \
 		NODE_PATH=$(SERVER_COVERAGE_PATH) \
 		mocha -R html-cov $(SERVER_SPEC_PATH) \
-		--compilers coffee:coffee-script \
-		--recursive \
-		--require should \
+		$(MOCHA_OPTS) \
 		> $(SERVER_COVERAGE_PATH).html
 		
 	@rm -r $(SERVER_COVERAGE_TMP_PATH)

@@ -58,8 +58,7 @@ grunt tasks.
 
 ```make install```
 
-This will install all the relevant dependencies for this project as outlined in
-```package.json```, and through the ```scripts/install.sh``` shell script.
+This will install all the relevant dependencies for this project as outlined in ```package.json```, and through the ```scripts/install.sh``` shell script.
 
 ### Development
 
@@ -107,8 +106,7 @@ Run unit (and integration) tests for the server only.
 
 ```make cov```
 
-Build the instrumented JavaScript and run unit tests for the client and the
-server. This target will output ```build/coverage/client.html``` and ```build/coverage/client.html```.
+Build the instrumented JavaScript and run unit tests for the client and the server. This target will output ```build/coverage/client.html``` and ```build/coverage/client.html```.
 
 ```make cov-client```
 

@@ -3,17 +3,19 @@ class DefaultController
   setup: ( app ) ->
   
     app.get "/", @index
-    app.get "/api/data", @data
+    app.get "/api/contacts", @contacts
     app.get "/echo/:message", @echo
       
   index: ( req, res ) =>
     
     res.render "index"
     
-  data: ( req, res ) =>
+  contacts: ( req, res ) =>
   
-    res.send
-      thing: "Stuff"
+    res.send [
+      { name: "John Smith", title: "Chap" }
+      { name: "Steve Evans", title: "Fella" }
+    ]
     
   echo: ( req, res ) =>
   

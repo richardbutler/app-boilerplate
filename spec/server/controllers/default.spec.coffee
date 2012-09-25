@@ -18,15 +18,24 @@ describe "default controller", ->
           throw err if err
           res.text.should.be.a( "string" )
           done()
-
-  describe "data", ->
-    it "should render data", ( done ) ->
+          
+  describe "index", ->
+    it "should be cached on the 2nd request", ( done ) ->
       request( app )
-        .get( "/api/data" )
+        .get( "/" )
+        .end ( err, res ) ->
+          throw err if err
+          done()
+
+  describe "contacts", ->
+    it "should render contacts", ( done ) ->
+      request( app )
+        .get( "/api/contacts" )
         .expect( "Content-Type", /json/ )
         .expect( 200 )
         .end ( err, res ) ->
           throw err if err
-          res.body.should.be.a( "object" )
-          res.body.thing.should.equal( "Stuff" )
+          res.body.length.should.equal( 2 )
+          res.body[ 0 ].name.should.be.a( "string" )
+          res.body[ 0 ].title.should.be.a( "string" )
           done()

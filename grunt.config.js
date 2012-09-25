@@ -71,6 +71,15 @@ module.exports = {
     codegen: {
       quote_keys: false
     }
-  }
+  },
+  
+  /**
+   * These commands can cause a make -> grunt -> make loop - is this ugly?
+   */
+  
+  CLIENT_TEST_COMMAND: "make test-client",
+  SERVER_TEST_COMMAND: "make test-server",
+  CLIENT_TEST_COVERAGE_COMMAND: "make cov-client",
+  SERVER_TEST_COVERAGE_COMMAND: "make cov-server"
   
 }

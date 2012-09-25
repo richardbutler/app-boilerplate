@@ -13,10 +13,10 @@ module.exports = ( app ) ->
   #
   #-----------------------------------------------------------------------------
   
-  CLIENT_SOURCE_PATH    = "src/client"
-  CLIENT_VIEWS_PATH     = "src/client/views"
-  CLIENT_BUILD_PATH     = "build/dev/public"
-  CLIENT_RELEASE_PATH   = "build/prod/public"
+  CLIENT_SOURCE_PATH      = "src/client"
+  CLIENT_VIEWS_PATH       = "src/client/views"
+  CLIENT_BUILD_PATH       = "build/dev/public"
+  CLIENT_RELEASE_PATH     = "build/prod/public"
   
   #-----------------------------------------------------------------------------
   #
