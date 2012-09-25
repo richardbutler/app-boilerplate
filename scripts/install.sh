@@ -9,6 +9,12 @@ if ! which coffee >/dev/null; then
 	sudo npm install -g coffee-script
 fi
 
+# Install grunt
+
+if ! which grunt >/dev/null; then
+	sudo npm install -g grunt
+fi
+
 # Install mocha
 
 if ! which mocha >/dev/null; then
