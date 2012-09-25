@@ -219,7 +219,8 @@ cov-client:
 		$(MOCHA_OPTS) \
 		> $(CLIENT_COVERAGE_PATH).html
 
-	@rm -r $(COVERAGE_CLIENT_TMP_PATH)
+	@rm -r $(CLIENT_COVERAGE_TMP_PATH)/*
+	@rmdir $(CLIENT_COVERAGE_TMP_PATH)
 
 #
 # Build the instrumented JavaScript and run unit tests for
@@ -245,5 +246,6 @@ cov-server:
 		$(MOCHA_OPTS) \
 		> $(SERVER_COVERAGE_PATH).html
 		
-	@rm -r $(SERVER_COVERAGE_TMP_PATH)
+	@rm -r $(SERVER_COVERAGE_TMP_PATH)/*
+	@rmdir $(SERVER_COVERAGE_TMP_PATH)
 		

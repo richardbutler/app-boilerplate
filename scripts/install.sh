@@ -31,9 +31,8 @@ fi
 
 if ! which jscoverage >/dev/null; then
 	cd /usr/local/src
-	sudo wget http://siliconforks.com/jscoverage/download/jscoverage-0.5.1.tar.bz2
-	sudo tar -xvf jscoverage-0.5.1.tar.bz2
-	cd jscoverage-0.5.1
+	sudo git clone https://github.com/visionmedia/node-jscoverage
+	cd node-jscoverage
 	sudo ./configure
 	sudo make && sudo make install
 fi
