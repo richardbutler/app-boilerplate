@@ -483,7 +483,7 @@ module.exports = function(grunt) {
    * (*) JS not currently copied - reinstate if using require.js
    */
   
-  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint spritesheet jade jst concat copy:js copy:img');
+  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint jade jst concat copy:js copy:img');
   grunt.registerTask('build-with-tests', 'build shell:client_test shell:server_test');
   
   /**
