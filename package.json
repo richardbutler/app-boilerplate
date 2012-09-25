@@ -18,9 +18,7 @@
     "stylus": "*",
     "nib": "*",
     "jade": "*",
-    "async": "*"
-  },
-  "devDependencies": {
+    "async": "*",
     "mocha": "*",
     "zombie": "*",
     "jquery": "*",
