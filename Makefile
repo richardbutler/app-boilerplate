@@ -12,32 +12,32 @@ SHELL := /bin/bash
 # Source paths
 #
 
-CLIENT_SOURCE_PATH			= "./src/client/scripts"
-SERVER_SOURCE_PATH 			= "./src/server"
+CLIENT_SOURCE_PATH			= ./src/client/scripts
+SERVER_SOURCE_PATH 			= ./src/server
 
 #
 # Spec (test) paths
 #
 
-CLIENT_SPEC_PATH			= "./spec/client"
-SERVER_SPEC_PATH 			= "./spec/server"
+CLIENT_SPEC_PATH			= ./spec/client
+SERVER_SPEC_PATH 			= ./spec/server
 
 #
 # Build paths
 #
 
-DEVELOPMENT_BUILD_PATH 		= "./build/dev"
-PRODUCTION_BUILD_PATH 		= "./build/prod"
+DEVELOPMENT_BUILD_PATH 		= ./build/dev
+PRODUCTION_BUILD_PATH 		= ./build/prod
 
 #
 # Code coverage paths
 #
 
-CLIENT_COVERAGE_PATH		= "./build/coverage/client"
-SERVER_COVERAGE_PATH		= "./build/coverage/server"
-COVERAGE_TMP_PATH			= "./build/coverage/tmp"
-CLIENT_COVERAGE_TMP_PATH	= "./build/coverage/tmp/client"
-SERVER_COVERAGE_TMP_PATH	= "./build/coverage/tmp/server"
+CLIENT_COVERAGE_PATH		= ./build/coverage/client
+SERVER_COVERAGE_PATH		= ./build/coverage/server
+COVERAGE_TMP_PATH			= ./build/coverage/tmp
+CLIENT_COVERAGE_TMP_PATH	= ./build/coverage/tmp/client
+SERVER_COVERAGE_TMP_PATH	= ./build/coverage/tmp/server
 
 #
 # Options
@@ -63,14 +63,6 @@ all: install prod-server
 #
 
 install:
-	@# Create a symlink from to common scripts from client src
-	@cd $(CLIENT_SOURCE_PATH) && \
-		ln -s ../../common common
-	
-	@# Create a symlink from to common scripts from server src
-	@cd $(SERVER_SOURCE_PATH) && \
-		ln -s ../common common
-
 	@npm install
 
 #-------------------------------------------------------------------------------
@@ -84,14 +76,14 @@ install:
 # reloads in the browser
 #
 
-dev:
+dev: install
 	@grunt dev --force
 
 #
 # As 'dev' target, but also runs all unit tests.
 #
 
-dev-with-tests:
+dev-with-tests: install
 	@grunt dev-with-tests --force
 
 #
@@ -136,6 +128,7 @@ dev-server-run:
 #
 
 prod:
+	@npm install --production
 	@grunt release --force
 
 #

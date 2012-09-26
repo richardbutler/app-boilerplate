@@ -3,6 +3,7 @@
 # Create application
 
   app = require( "./core/app" )
+  log = require( "./core/log" )
   
 # Setup controllers
 
@@ -17,7 +18,7 @@
 
   app.listen 3000
   
-  console.log "-- App started on localhost:3000" if app.get( "env" ) isnt "test"
+  log.debug "-- App started on localhost:3000"
 
 # Export for testing
 

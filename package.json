@@ -12,13 +12,16 @@
   "dependencies": {
     "connect": "*",
     "express": "*",
+    "underscore": "*",
+    "async": "*"
+  },
+  "devDependencies": {
     "browserify": "*",
     "connect-coffee-script": "*",
-    "underscore": "*",
     "stylus": "*",
     "nib": "*",
+    "docco": "*",
     "jade": "*",
-    "async": "*",
     "mocha": "*",
     "zombie": "*",
     "jquery": "*",

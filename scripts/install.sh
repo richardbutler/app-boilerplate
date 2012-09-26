@@ -27,6 +27,22 @@ if ! which supervisor >/dev/null; then
 	sudo npm install -g supervisor
 fi
 
+# Install docco
+# Not required - installed locally.
+# if ! which docco >/dev/null; then
+#	sudo npm install -g docco
+# fi
+
+# Install Pygments (for docco)
+
+if ! which pygmentize >/dev/null; then
+	cd /usr/local/src
+	sudo wget https://bitbucket.org/birkenfeld/pygments-main/get/1.5.tar.gz
+	tar -zxvf 1.5.tar.gz
+	cd 1.5
+	sudo python setup.py install
+fi
+
 # Install jscoverage
 
 if ! which jscoverage >/dev/null; then
