@@ -38,8 +38,8 @@ fi
 if ! which pygmentize >/dev/null; then
 	cd /usr/local/src
 	sudo wget https://bitbucket.org/birkenfeld/pygments-main/get/1.5.tar.gz
-	tar -zxvf 1.5.tar.gz
-	cd 1.5
+	sudo tar -zxvf 1.5.tar.gz
+	cd birkenfeld-pygments-main-eff3aee4abff
 	sudo python setup.py install
 fi
 
