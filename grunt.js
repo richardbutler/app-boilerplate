@@ -145,7 +145,10 @@ module.exports = function(grunt) {
     
     browserify: {
       "build/dev/public/scripts/app.js": {
-        entries: ['src/client/scripts/app.coffee']
+        entries: [
+          'src/server/common/**/*.coffee',
+          'src/client/scripts/app.coffee'
+        ]
       }
     },
     

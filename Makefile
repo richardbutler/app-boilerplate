@@ -63,6 +63,14 @@ all: install prod-server
 #
 
 install:
+	@# Create a symlink from to common scripts from client src
+	@cd $(CLIENT_SOURCE_PATH) && \
+		ln -s ../../common common
+	
+	@# Create a symlink from to common scripts from server src
+	@cd $(SERVER_SOURCE_PATH) && \
+		ln -s ../common common
+
 	@npm install
 
 #-------------------------------------------------------------------------------

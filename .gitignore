@@ -9,3 +9,5 @@ coverage
 build
 release
 /.idea/
+/src/server/common
+/src/client/scripts/common
