@@ -1,3 +1,5 @@
+"use strict"
+
 express = require "express"
 
 # Create application - this is kept in a separate module

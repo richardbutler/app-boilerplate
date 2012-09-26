@@ -7,6 +7,8 @@ browserify  = require "browserify"
 
 module.exports = ( app ) ->
   
+  "use strict"
+  
   #-----------------------------------------------------------------------------
   #
   # Environment constants

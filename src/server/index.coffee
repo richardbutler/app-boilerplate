@@ -1,3 +1,5 @@
+  "use strict"
+
 # Create application
 
   app = require( "./core/app" )
