@@ -30,6 +30,7 @@
     "grunt-browserify": "*",
     "grunt-css": "*",
     "grunt-shell": "*",
+    "grunt-jade": "*",
     "grunt-coffeelint": "*",
     "node-spritesheet": "*",
     "should": "*",

@@ -6,8 +6,9 @@ $ ->
   
   $.getJSON "/api/contacts", ( contacts ) ->
     markup = ""
+    tmpl = jade.templates.contact
     
     for contact in contacts
-      markup += JST.contact( contact )
+      markup += tmpl( contact )
     
     $( "ul.contacts" ).append( markup )

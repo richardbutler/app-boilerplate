@@ -56,6 +56,8 @@ endef
 #
 #-------------------------------------------------------------------------------
 
+all: install prod-server
+
 #
 # Update the application's dependencies
 #

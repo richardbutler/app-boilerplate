@@ -207,7 +207,11 @@ module.exports = function(grunt) {
       
       app: {
         src: [
-          'build/dev/public/scripts/templates.js',
+          // Jade runtime
+          'build/dev/views/templates/runtime.js',
+          // Jade compiled templates
+          'build/dev/views/templates/**/*.js',
+          // Application code
           'build/dev/public/scripts/app.js'
         ],
         dest: 'build/dev/public/scripts/app.js'
@@ -261,11 +265,11 @@ module.exports = function(grunt) {
     //
     //--------------------------------------------------------------------------
     
-    /**
-     * Jade compilation to HTML.
-     */
-    
     jade: {
+      /**
+       * Jade compilation to HTML.
+       */
+      
       //views: {
       //  options: {
       //    basePath: "src/client/views/"
@@ -274,35 +278,17 @@ module.exports = function(grunt) {
       //    "build/dev/views/": [ "src/client/views/**/*.jade" ]
       //  }
       //},
+      
+      /**
+       * Jade compilation to JS templates.
+       */
       templates: {
         options: {
-          basePath: "src/client/views/"
+          client: true,
+          compileDebug: false
         },
-        files: {
-          "build/dev/views/templates/": [ "src/client/views/**/*.tpl.jade" ]
-        }
-      }
-    },
-    
-    /**
-     * Template compilation: takes all .tpl.jade files from a directory and
-     * injects them into the specified js file.
-     */
-    
-    jst: {
-      compile: {
-        options: {
-          templateSettings: {
-            //interpolate : /\{\{(.+?)\}\}/g
-            interpolate : /\{\{(.+?)\}\}/g
-          },
-          processName: function(filename) {
-            return filename.split("/").pop().split(".").shift();
-          }
-        },
-        files: {
-          'build/dev/public/scripts/templates.js': [ 'build/dev/views/**/*.tpl.html' ]
-        }
+        src: [ "src/client/templates/**/*.jade" ],
+        dest: "build/dev/views/templates"
       }
     },
     
@@ -445,6 +431,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-reload');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-css');
+  grunt.loadNpmTasks('grunt-jade');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('node-spritesheet');
@@ -483,7 +470,7 @@ module.exports = function(grunt) {
    * (*) JS not currently copied - reinstate if using require.js
    */
   
-  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint jade jst concat copy:js copy:img');
+  grunt.registerTask('build', 'clean:build coffeelint browserify stylus csslint jade concat copy:js copy:img');
   grunt.registerTask('build-with-tests', 'build shell:client_test shell:server_test');
   
   /**
