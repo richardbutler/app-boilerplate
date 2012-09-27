@@ -4,7 +4,7 @@ winston = require 'winston'
 path    = require 'path'
 fs      = require 'fs'
 
-env = process.env.NODE_ENV
+env = process.env.NODE_ENV || "development"
 
 # Ensure we have a /log directory
 
@@ -31,7 +31,7 @@ logger = new winston.Logger
 
 logger.add( winston.transports.File,
   filename: path.resolve( "./log/#{ env }.log" )
-  level: if env is "production" then "error" else "debug"
+  level: if env is "production" then "warn" else "debug"
   handleExceptions: true
 )
 

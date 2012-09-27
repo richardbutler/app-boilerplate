@@ -30,7 +30,7 @@ module.exports = ( app ) ->
     setupDevelopmentEnvironment()
     
     # Log stuff
-    app.use express.logger()
+    app.use( express.logger( "dev" ) )
     
     # Dump exceptions
     app.use express.errorHandler
