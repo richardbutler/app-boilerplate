@@ -13,7 +13,8 @@
     "connect": "*",
     "express": "*",
     "underscore": "*",
-    "async": "*"
+    "async": "*",
+    "winston": "*"
   },
   "devDependencies": {
     "browserify": "*",

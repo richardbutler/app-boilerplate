@@ -1,6 +1,6 @@
 "use strict"
 
-### Default controller
+#### Default controller
 
 # Outlines the server-side routes for the application.
 

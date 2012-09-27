@@ -130,7 +130,7 @@ dev-server:
 dev-server-run:
 	@NODE_PATH=. \
 		NODE_ENV=development \
-		supervisor \
+		supervisor -q \
 		--no-restart-on exit \
 		--watch $(SERVER_SOURCE_PATH) \
 		$(SERVER_SOURCE_PATH)/index.coffee 
@@ -156,7 +156,7 @@ prod-server: prod prod-server-run
 prod-server-run:
 	@NODE_PATH=. \
 		NODE_ENV=production \
-		supervisor $(PRODUCTION_BUILD_PATH)/index.js
+		supervisor -q $(PRODUCTION_BUILD_PATH)/index.js
 
 #-------------------------------------------------------------------------------
 #

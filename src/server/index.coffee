@@ -18,7 +18,7 @@
 
   app.listen 3000
   
-  log.debug "-- App started on localhost:3000"
+  log.info "App started on localhost:3000"
 
 # Export for testing
 
