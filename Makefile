@@ -71,6 +71,12 @@ all: install prod-server
 install:
 	@npm install
 
+ci:
+	@cd WORKSPACE
+	@git config user.email "rich@aspectvision.com"
+	@git config user.name "Richard Butler"
+	@make release
+
 #-------------------------------------------------------------------------------
 #
 # DEVELOPMENT
