@@ -123,13 +123,6 @@ module.exports = function(grunt) {
         },
         src: "src/client/scripts/**/*.coffee"
       },
-      common: {
-        options: {
-          output: "docs/common",
-          basePath: "src/common"
-        },
-        src: "src/common/**/*.coffee"
-      },
       server: {
         options: {
           output: "docs/server",
@@ -513,7 +506,7 @@ module.exports = function(grunt) {
    * (*) JS not currently copied - reinstate if using require.js
    */
   
-  grunt.registerTask('build', 'clean:build coffeelint copy:common browserify clean:common stylus csslint jade concat copy:js copy:img docco');
+  grunt.registerTask('build', 'clean:build coffeelint copy:common browserify clean:common stylus csslint jade concat copy:js copy:img');
   grunt.registerTask('build-with-tests', 'build shell:client_test shell:server_test');
   
   /**
@@ -532,7 +525,13 @@ module.exports = function(grunt) {
   
   grunt.registerTask('release', 'build clean:release coffee:server min cssmin copy:release');
   grunt.registerTask('default', 'release');
-  
+
+  /**
+   * Build for CI, for use with Jenkins
+   */
+
+  grunt.registerTask('ci', 'release cov docco');
+
   /**
    * Compiles a build of the client CoffeeScript sources into JavaScript, ready
    * for instrumentation by jscoverage (requires Make task).
@@ -546,5 +545,11 @@ module.exports = function(grunt) {
    */
   
   grunt.registerTask('cov:server', 'coffee:coverage_server');
+
+  /**
+   * Run all tests with coverage
+   */
+
+  grunt.registerTask('cov', 'cov:client cov:server');
 
 };

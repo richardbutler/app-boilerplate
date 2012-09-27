@@ -43,6 +43,12 @@ SERVER_COVERAGE_TMP_PATH	= ./build/coverage/tmp/server
 # Options
 #
 
+ifdef JENKINS_HOME
+	MOCHA_REPORTER			= "xunit"
+else
+	MOCHA_REPORTER			= "spec"
+endif
+
 define MOCHA_OPTS
 	--compilers coffee:coffee-script \
 		--recursive \
@@ -166,7 +172,7 @@ test:
 test-client:
 	@NODE_PATH=$(CLIENT_SOURCE_PATH) \
 		NODE_ENV=test \
-		mocha -R spec $(CLIENT_SPEC_PATH) \
+		mocha -R $(MOCHA_REPORTER) $(CLIENT_SPEC_PATH) \
 		$(MOCHA_OPTS) \
 		--colors \
 		--slow 1000ms
@@ -178,7 +184,7 @@ test-client:
 test-server:
 	@NODE_PATH=$(SERVER_SOURCE_PATH) \
 		NODE_ENV=test \
-		mocha -R spec $(SERVER_SPEC_PATH) \
+		mocha -R $(MOCHA_REPORTER) $(SERVER_SPEC_PATH) \
 		$(MOCHA_OPTS) \
 		--colors
 
