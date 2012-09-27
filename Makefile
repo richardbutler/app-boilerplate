@@ -72,10 +72,10 @@ install:
 	@npm install
 
 ci:
-	@cd WORKSPACE
-	@git config user.email "rich@aspectvision.com"
-	@git config user.name "Richard Butler"
-	@make release
+	cd WORKSPACE
+	git config --global user.email "rich@aspectvision.com"
+	git config --global user.name "Richard Butler"
+	make release
 
 #-------------------------------------------------------------------------------
 #
