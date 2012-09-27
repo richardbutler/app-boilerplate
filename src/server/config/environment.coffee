@@ -6,24 +6,24 @@ nib         = require "nib"
 browserify  = require "browserify"
 
 module.exports = ( app ) ->
-  
+
   "use strict"
-  
-  ### Environment constants
+
+  #### Environment constants
   
   CLIENT_SOURCE_PATH      = "src/client"
   CLIENT_VIEWS_PATH       = "src/client/views"
   CLIENT_BUILD_PATH       = "build/dev/public"
   CLIENT_RELEASE_PATH     = "build/prod/public"
   
-  ### Common development and test configuration
+  #### Common development and test configuration
   
   setupDevelopmentEnvironment = ->
   
     # Serve static assets
     app.use express.static( CLIENT_BUILD_PATH )
   
-  ### Development-only configuration
+  #### Development-only configuration
   
   app.configure "development", ->
   
@@ -37,13 +37,13 @@ module.exports = ( app ) ->
       dumpExceptions: true
       showStack: true
   
-  ### Test-only configuration
+  #### Test-only configuration
     
   app.configure "test", ->
   
     setupDevelopmentEnvironment()
   
-  ### Production-only configuration
+  #### Production-only configuration
   
   app.configure "production", ->
   
@@ -53,7 +53,7 @@ module.exports = ( app ) ->
     # Serve static assets
     app.use express.static( CLIENT_RELEASE_PATH )
   
-  ### Default cross-environment configuration
+  #### Default cross-environment configuration
 
   app.configure ->
     
